@@ -17,8 +17,7 @@ public class SpuInfoController {
 
     @Autowired
     SpuInfoService spuInfoService;
-    @Autowired
-    BaseSaleAttrService baseSaleAttrService;
+
 
     //查询spuinfo分页列表信息
     @GetMapping("/{pageNum}/{pageSize}")
@@ -29,12 +28,6 @@ public class SpuInfoController {
         return Result.ok(result);
     }
 
-    //获取销售属性信息列表
-    @GetMapping("/baseSaleAttrList")
-    public Result getBaseSaleAttrList(){
-        List<BaseSaleAttr> result = baseSaleAttrService.getBaseSaleAttrList();
-        return Result.ok(result);
-    }
 
     //添加spu属性信息
     @PostMapping("/saveSpuInfo")

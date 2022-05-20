@@ -17,6 +17,7 @@ public class SpuSaleAttrController {
     @Autowired
     SpuSaleAttrService spuSaleAttrService;
 
+
     //根据spuId回属性信息
     @GetMapping("/spuSaleAttrList/{spuId}")
     public Result getSpuSaleAttrList(@PathVariable Long spuId){

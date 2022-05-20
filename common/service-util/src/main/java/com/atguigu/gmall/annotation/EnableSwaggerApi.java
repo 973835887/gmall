@@ -1,13 +1,14 @@
-package com.atguigu.gmall.minio.annotation;
+package com.atguigu.gmall.annotation;
 
+import com.atguigu.gmall.config.Swagger2Config;
 import com.atguigu.gmall.minio.config.MinioConfiguration;
 import org.springframework.context.annotation.Import;
 
 import java.lang.annotation.*;
 
-@Import(MinioConfiguration.class)
+@Import(Swagger2Config.class)
 @Target({ElementType.TYPE, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
-public @interface EnableMinio {
+public @interface EnableSwaggerApi {
 }

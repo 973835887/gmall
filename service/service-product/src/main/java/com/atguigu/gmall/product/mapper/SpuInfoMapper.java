@@ -12,7 +12,7 @@ import org.apache.ibatis.annotations.Param;
 * @Entity com.atguigu.gmall.product.domain.SpuInfo
 */
 public interface SpuInfoMapper extends BaseMapper<SpuInfo> {
-    void insertReturnId(@Param("spuInfo") SpuInfo spuInfo);
+
 }
 
 
