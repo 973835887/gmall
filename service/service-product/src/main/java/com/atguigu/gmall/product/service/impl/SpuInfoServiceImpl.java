@@ -3,8 +3,11 @@ package com.atguigu.gmall.product.service.impl;
 import com.atguigu.gmall.model.product.SpuImage;
 import com.atguigu.gmall.model.product.SpuInfo;
 import com.atguigu.gmall.model.product.SpuSaleAttr;
+import com.atguigu.gmall.model.product.SpuSaleAttrValue;
 import com.atguigu.gmall.product.mapper.SpuImageMapper;
 import com.atguigu.gmall.product.mapper.SpuSaleAttrMapper;
+import com.atguigu.gmall.product.mapper.SpuSaleAttrValueMapper;
+import com.atguigu.gmall.product.service.SpuSaleAttrValueService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -34,6 +37,9 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoMapper, SpuInfo>
     @Autowired
     SpuImageMapper spuImageMapper;
 
+    @Autowired
+    SpuSaleAttrValueService spuSaleAttrValueService;
+
     @Override
     public Page<SpuInfo> getPageInfo(Long pageNum, Long pageSize, Long category3Id) {
         Page<SpuInfo> page = new Page<>(pageNum,pageSize);
@@ -46,18 +52,30 @@ public class SpuInfoServiceImpl extends ServiceImpl<SpuInfoMapper, SpuInfo>
     @Override
     public void savespuInfo(SpuInfo spuInfo) {
         //保存主属性
-        spuInfoMapper.insertReturnId(spuInfo);
+        spuInfoMapper.insert(spuInfo);
+        Long spuId = spuInfo.getId();
 
-
+        //spu对应的销售属性
         List<SpuSaleAttr> spuSaleAttrList = spuInfo.getSpuSaleAttrList();
+
         for (SpuSaleAttr spuSaleAttr : spuSaleAttrList) {
-            spuSaleAttr.setSpuId(spuInfo.getId());
+            spuSaleAttr.setSpuId(spuId);
             spuSaleAttrMapper.insert(spuSaleAttr);
+
+            //批量添加spu销售属性值
+            List<SpuSaleAttrValue> spuSaleAttrValueList = spuSaleAttr.getSpuSaleAttrValueList();
+            for (SpuSaleAttrValue spuSaleAttrValue : spuSaleAttrValueList) {
+                spuSaleAttrValue.setSpuId(spuId);
+                spuSaleAttrValue.setSaleAttrName(spuSaleAttr.getSaleAttrName());
+            }
+            spuSaleAttrValueService.saveBatch(spuSaleAttrValueList);
         }
 
+
+        //批量添加商品图片列表
         List<SpuImage> spuImageList = spuInfo.getSpuImageList();
         for (SpuImage spuImage : spuImageList) {
-            spuImage.setSpuId(spuInfo.getId());
+            spuImage.setSpuId(spuId);
             spuImageMapper.insert(spuImage);
         }
 
