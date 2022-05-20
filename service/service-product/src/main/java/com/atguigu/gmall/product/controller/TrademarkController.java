@@ -16,7 +16,7 @@ public class TrademarkController {
     @Autowired
     BaseTrademarkService baseTrademarkService;
 
-    //分页查询品牌信息
+    //分页查询品牌信
     @GetMapping("/baseTrademark/{pageNum}/{pageSize}")
     public Result baseTrademarkPage(@PathVariable Long pageNum,
                                     @PathVariable Long pageSize){
