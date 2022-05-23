@@ -4,3 +4,10 @@ server:
 spring:
   autoconfigure:
     exclude: org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+
+app:
+  threadpool:
+    corePoolSize: 8
+    maximumPoolSize: 16
+    keepAliveTime: 1
+    queueSize: 5000

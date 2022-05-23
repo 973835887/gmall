@@ -1,5 +1,6 @@
 package com.atguigu.gmall.product.service.impl;
 
+import com.atguigu.gmall.common.constants.RedisConst;
 import com.atguigu.gmall.common.result.Result;
 import com.atguigu.gmall.model.product.BaseCategory1;
 import com.atguigu.gmall.model.product.BaseCategory2;
@@ -10,8 +11,10 @@ import com.atguigu.gmall.product.mapper.BaseCategoryMapper1;
 import com.atguigu.gmall.product.mapper.BaseCategoryMapper2;
 import com.atguigu.gmall.product.mapper.BaseCategoryMapper3;
 import com.atguigu.gmall.product.service.BaseCategoryService;
+import com.atguigu.gmall.product.service.CacheService;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.fasterxml.jackson.core.type.TypeReference;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +28,8 @@ public class BaseCategoryServiceImpl implements BaseCategoryService {
     BaseCategoryMapper2 baseCategoryMapper2;
     @Autowired
     BaseCategoryMapper3 baseCategoryMapper3;
+    @Autowired
+    CacheService cacheService;
 
     @Override
     public List<BaseCategory1> getAllCategory1() {
@@ -53,8 +58,20 @@ public class BaseCategoryServiceImpl implements BaseCategoryService {
     //获取所有的分类数据以及子分类
     @Override
     public List<CategoryAndChildsTo> getAllCategoryAndChilds() {
-        List<CategoryAndChildsTo> categoryAndChildsToList = baseCategoryMapper1.getAllCategoryAndChilds();
-        return categoryAndChildsToList;
+        //1,查询缓存
+        Object cacheData = cacheService.getCacheData(RedisConst.CATEGORY_KEY, new TypeReference<List<CategoryAndChildsTo>>() {
+        });
+
+        if (cacheData == null){
+            //2,缓存没有,查询数据库
+            List<CategoryAndChildsTo> categoryAndChildsToList = baseCategoryMapper1.getAllCategoryAndChilds();
+            //3.放入缓存
+            cacheService.save(RedisConst.CATEGORY_KEY,categoryAndChildsToList);
+            return categoryAndChildsToList;
+        }
+
+        //4.返回缓存数据
+        return (List<CategoryAndChildsTo>) cacheData;
     }
 
     //获取一个skuId的层级信息

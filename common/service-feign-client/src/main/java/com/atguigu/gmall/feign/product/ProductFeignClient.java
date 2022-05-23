@@ -6,9 +6,7 @@ import com.atguigu.gmall.model.product.SkuInfo;
 import com.atguigu.gmall.model.product.SpuSaleAttr;
 import com.atguigu.gmall.model.to.CategoryAndChildsTo;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -17,8 +15,10 @@ import java.util.Map;
 @FeignClient("service-product")
 @RequestMapping("/rpc/inner/product")
 public interface ProductFeignClient {
-    //获取所有的分类以及子分类信息
+    //获取所有的分类以及子分类信息  /rpc/inner/product/categorys
     @GetMapping("/categorys")
+    //weball直接访问
+    @ResponseBody
     public Result<List<CategoryAndChildsTo>> getAllCategoryAndChilds();
 
     //获取一个sku的分类层级信息

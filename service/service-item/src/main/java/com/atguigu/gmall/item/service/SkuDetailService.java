@@ -1,4 +1,4 @@
-package com.atguigui.gmall.item.service;
+package com.atguigu.gmall.item.service;
 
 import com.atguigu.gmall.model.to.SkuDetailTo;
 

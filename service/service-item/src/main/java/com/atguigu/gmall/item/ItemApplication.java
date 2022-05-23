@@ -1,4 +1,4 @@
-package com.atguigui.gmall.item;
+package com.atguigu.gmall.item;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.cloud.client.SpringCloudApplication;
