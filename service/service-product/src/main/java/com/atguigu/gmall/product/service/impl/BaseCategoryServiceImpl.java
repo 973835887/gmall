@@ -1,8 +1,11 @@
 package com.atguigu.gmall.product.service.impl;
 
+import com.atguigu.gmall.common.result.Result;
 import com.atguigu.gmall.model.product.BaseCategory1;
 import com.atguigu.gmall.model.product.BaseCategory2;
 import com.atguigu.gmall.model.product.BaseCategory3;
+import com.atguigu.gmall.model.product.BaseCategoryView;
+import com.atguigu.gmall.model.to.CategoryAndChildsTo;
 import com.atguigu.gmall.product.mapper.BaseCategoryMapper1;
 import com.atguigu.gmall.product.mapper.BaseCategoryMapper2;
 import com.atguigu.gmall.product.mapper.BaseCategoryMapper3;
@@ -44,5 +47,20 @@ public class BaseCategoryServiceImpl implements BaseCategoryService {
         queryWrapper.eq("category2_id",category2Id);
         List<BaseCategory3> baseCategory3s = baseCategoryMapper3.selectList(queryWrapper);
         return baseCategory3s;
+    }
+
+
+    //获取所有的分类数据以及子分类
+    @Override
+    public List<CategoryAndChildsTo> getAllCategoryAndChilds() {
+        List<CategoryAndChildsTo> categoryAndChildsToList = baseCategoryMapper1.getAllCategoryAndChilds();
+        return categoryAndChildsToList;
+    }
+
+    //获取一个skuId的层级信息
+    @Override
+    public BaseCategoryView getCagetgoryView(Long skuId) {
+        BaseCategoryView result = baseCategoryMapper1.getCagetgoryView(skuId);
+        return result;
     }
 }

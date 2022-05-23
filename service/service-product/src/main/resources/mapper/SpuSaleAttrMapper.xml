@@ -31,6 +31,21 @@
         </collection>
     </resultMap>
 
+    <resultMap id="SpuSaleAttrAndValueMap" type="com.atguigu.gmall.model.product.SpuSaleAttr">
+        <id property="id" column="id"></id>
+        <result property="spuId" column="spu_id"></result>
+        <result property="baseSaleAttrId" column="base_sale_attr_id"></result>
+        <result property="saleAttrName" column="sale_attr_name"></result>
+        <collection property="spuSaleAttrValueList" ofType="com.atguigu.gmall.model.product.SpuSaleAttrValue">
+            <id property="id" column="vid"></id>
+            <result property="saleAttrName" column="sale_attr_name"></result>
+            <result property="baseSaleAttrId" column="base_sale_attr_id"></result>
+            <result property="spuId" column="spu_id"></result>
+            <result property="saleAttrValueName" column="sale_attr_value_name"></result>
+            <result property="isChecked" column="is_check"></result>
+        </collection>
+    </resultMap>
+
     <!--  spu_sale_attr_value  -->
     <select id="getSpuSaleAttrList" resultMap="ssavMap">
         SELECT ssa.*,ssav.id svid,ssav.spu_id sv_spu_id,ssav.base_sale_attr_id sv_bsa_id,ssav.sale_attr_value_name sale_attr_value_name,ssav.sale_attr_name sv_saname
@@ -39,6 +54,19 @@
         on ssa.spu_id = ssav.spu_id
         and ssa.base_sale_attr_id = ssav.base_sale_attr_id
         where ssa.spu_id = #{spuId}
+    </select>
+
+
+    <select id="getSpuSaleAttrAndValueBySkuId" resultMap="SpuSaleAttrAndValueMap">
+        select ssa.*,ssav.id vid,ssav.sale_attr_value_name sale_attr_value_name ,
+        if(sku_av.sale_attr_value_id is null,'0','1') is_check
+        from spu_sale_attr ssa
+        LEFT JOIN spu_sale_attr_value ssav ON
+        ssa.spu_id = ssav.spu_id AND ssa.base_sale_attr_id = ssav.base_sale_attr_id
+        LEFT JOIN sku_sale_attr_value sku_av on ssav.id = sku_av.sale_attr_value_id
+        AND sku_av.spu_id = ssa.spu_id AND sku_av.sku_id = #{skuId}
+        WHERE ssa.spu_id = (SELECT spu_id FROM sku_info WHERE id = #{skuId})
+        ORDER BY ssa.base_sale_attr_id,ssav.id
     </select>
 
 
