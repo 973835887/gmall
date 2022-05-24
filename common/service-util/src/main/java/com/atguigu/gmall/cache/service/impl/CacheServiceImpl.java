@@ -1,15 +1,13 @@
-package com.atguigu.gmall.product.service.impl;
+package com.atguigu.gmall.cache.service.impl;
 
 import com.atguigu.gmall.common.util.JSONs;
-import com.atguigu.gmall.model.to.CategoryAndChildsTo;
-import com.atguigu.gmall.product.service.CacheService;
+import com.atguigu.gmall.cache.service.CacheService;
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -65,7 +63,10 @@ public class CacheServiceImpl implements CacheService {
         if (data == null){
             redisTemplate.opsForValue().set(categoryKey,"no",30, TimeUnit.MINUTES);
         }else {
-            redisTemplate.opsForValue().set(categoryKey,JSONs.toStr(data),3,TimeUnit.DAYS);
+            //为了防止大量key同时过期,加上一个时间的随机值.防止缓存雪崩
+            Double result = Math.random() * 1000000000;
+            long mill = 1000 * 60 * 60 * 24 * 3 + result.intValue();
+            redisTemplate.opsForValue().set(categoryKey,JSONs.toStr(data),mill,TimeUnit.MILLISECONDS);
         }
 
     }

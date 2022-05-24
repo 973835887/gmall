@@ -5,7 +5,9 @@ import com.atguigu.gmall.model.product.*;
 import com.atguigu.gmall.product.mapper.*;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.atguigu.gmall.product.service.SkuInfoService;
+import org.redisson.api.RBloomFilter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,19 +26,31 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoMapper, SkuInfo>
 
     @Autowired
     SkuInfoMapper skuInfoMapper;
+
     @Autowired
     SkuAttrValueMapper skuAttrValueMapper;
+
     @Autowired
     SkuImageMapper skuImageMapper;
+
     @Autowired
     SkuSaleAttrValueMapper skuSaleAttrValueMapper;
+
     @Autowired
     SpuSaleAttrMapper spuSaleAttrMapper;
+
+    @Qualifier("skuIdBloom")
+    @Autowired
+    RBloomFilter<Object> skuIdBloom;
 
     @Override
     public void saveSkuInfo(SkuInfo skuInfo) {
         skuInfoMapper.insert(skuInfo);
         Long skuInfoId = skuInfo.getId();
+
+        skuIdBloom.add(skuInfoId);
+
+
         System.out.println("skuInfoId = " + skuInfoId);
         Long spuId = skuInfo.getSpuId();
 
@@ -84,6 +98,12 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoMapper, SkuInfo>
     public List<SpuSaleAttr> getSpuSaleAttrAndValueBySkuId(Long skuId) {
         List<SpuSaleAttr> spuSaleAttrs = spuSaleAttrMapper.getSpuSaleAttrAndValueBySkuId(skuId);
         return spuSaleAttrs;
+    }
+
+    @Override
+    public List<Long> getSkuIds() {
+        List<Long>  ids = skuInfoMapper.getSkuIds();
+        return ids;
     }
 
 
