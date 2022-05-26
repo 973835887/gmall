@@ -1,7 +1,6 @@
 package com.atguigu.gmall.product.service.impl;
 
 import com.atguigu.gmall.model.product.SpuSaleAttr;
-import com.atguigu.gmall.model.product.SpuSaleAttrValue;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.atguigu.gmall.product.service.SpuSaleAttrService;
 import com.atguigu.gmall.product.mapper.SpuSaleAttrMapper;
@@ -23,6 +22,7 @@ public class SpuSaleAttrServiceImpl extends ServiceImpl<SpuSaleAttrMapper, SpuSa
     SpuSaleAttrMapper spuSaleAttrMapper;
 
     //回显属性信息
+//    @Cache(cacheKey = RedisConst.SALE_ATTR_CACHE_KEY+"#{arg[0]}")
     @Override
     public List<SpuSaleAttr> getSpuSaleAttrList(Long spuId) {
         List<SpuSaleAttr> spuSaleAttrs = spuSaleAttrMapper.getSpuSaleAttrList(spuId);

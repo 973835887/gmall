@@ -19,3 +19,7 @@ spring:
           uri: lb://web-all
           predicates:
             - Host=**.gmall.com,gmall.com
+        - id: lb_test
+          uri: lb://service-item
+          predicates:
+            - Path=/redis/incr/**

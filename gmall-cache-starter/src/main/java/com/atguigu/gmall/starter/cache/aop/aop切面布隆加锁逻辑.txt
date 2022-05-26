@@ -1,0 +1,61 @@
+@Aspect
+@Component
+public class CacheAspect {
+
+    //10
+    @Autowired
+    CacheHelper cacheHelper;
+
+
+    @Around(value = "@annotation(com.atguigu.gmall.item.aop.annotation.Cache)")
+    public Object cacheServicearound(ProceedingJoinPoint joinPoint){
+        //获取目标方法参数
+        Object[] args = joinPoint.getArgs();
+
+
+        Object result = null;
+        try {
+            //前置通知
+            //1.查询缓存中有没有数据
+            String cacheKey = RedisConst.SKU_CACHE_KEY_PREFIX + args[0];
+            Object obj = cacheHelper.getCacheData(cacheKey,joinPoint);
+            if (obj == null){
+                //2,缓存中没有,询问布隆中有没有
+                boolean bloomContains =  cacheHelper.bloomTest(args[0]);
+                //3,布隆说有,可以回源查库
+                if (bloomContains){
+                    //5.回源之前加锁
+                    String lockKey = RedisConst.SKUDETAIL_LOCK_PREFIX + args[0];
+                    boolean lock = cacheHelper.trtLock(lockKey);
+                    if(lock){
+                        //6.利用反射执行目标方法
+                        result = joinPoint.proceed(args);
+                        //7.缓存中也保存一份
+                        cacheHelper.saveCacheData(cacheKey,result);
+                        //9 .解锁
+                        cacheHelper.unlock(lockKey);
+                        return result;
+
+                    }//8.加锁失败,等待一秒后再次查询缓存,返回缓存中的数据
+                    Thread.sleep(1000);
+                    obj = cacheHelper.getCacheData(cacheKey, joinPoint);
+                    return obj;
+                } else {
+                    //4.布隆说没有,打回
+                    return null;
+                }
+
+
+            }
+            //3.缓存中有直接返回
+            return  obj;
+            //返回通知
+        } catch (Throwable e) {
+            //异常通知
+            e.printStackTrace();
+        }finally {
+            //环绕通知
+        }
+        return result;
+    }
+}

@@ -1,7 +1,8 @@
-package com.atguigu.gmall.redisson;
+package com.atguigu.gmall.starter.redisson;
 
 
-import com.atguigu.gmall.common.constants.RedisConst;
+
+import com.atguigu.gmall.starter.constants.RedisConst;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.Redisson;
 import org.redisson.api.RBloomFilter;

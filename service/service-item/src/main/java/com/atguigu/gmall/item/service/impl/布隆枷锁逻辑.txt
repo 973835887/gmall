@@ -1,0 +1,53 @@
+        String cacheKey = RedisConst.SKU_CACHE_KEY_PREFIX + skuId;
+        //1.查询缓存
+        SkuDetailTo cacheData = cacheService.getCacheData(cacheKey, new TypeReference<SkuDetailTo>() {
+        });
+        //2.缓存中没有,准备回源
+        if(cacheData == null){
+            log.info("skuDetail 未命中.准备回源{}"+skuId);
+            //2.1布隆中有,可以回源
+            if (skuIdBloom.contains(skuId)){
+                log.info("skuDetail 布隆过滤通过{}"+skuId);
+                //5.加分布式锁,防止缓存击穿
+                RLock lock = redissonClient.getLock(RedisConst.SKUDETAIL_LOCK_PREFIX+skuId);
+                //6.尝试性枷锁;自动解锁+自动续期
+                boolean tryLock = false;
+                try {
+                    tryLock = lock.tryLock();
+                    //7.加锁成功
+                    if (tryLock){
+                        log.info("skuDetail 回源锁成功,查库{}"+skuId);
+                        SkuDetailTo detail = getDetailFromDb(skuId);
+                        //7.1 放入缓存中保存
+                        cacheService.save(cacheKey,detail);
+                        //7.2 返回数据
+                        return detail;
+                    }
+                } finally {
+                    try {
+                        lock.unlock();
+                    } catch (Exception e) {
+                        log.info("skuDetail 解锁失败{}"+skuId);
+                    }
+                }
+
+                //8.加锁失败
+                    //8.1 睡眠1秒
+                try {
+                    log.info("skuDetail 回源失败,查询缓存{}"+skuId);
+                    Thread.sleep(1000);
+                    //8.2 再次查询缓存
+                    cacheData = cacheService.getCacheData(cacheKey, new TypeReference<SkuDetailTo>() {
+                    });
+                    return cacheData;
+                } catch (InterruptedException e) {
+                    log.info("skuDetail 睡眠异常{}"+e);
+                }
+            }
+
+            //3.布隆不通过
+            log.info("skuDetail 布隆打回{}"+skuId);
+            return null;
+        }
+        //4.缓存不为空,返回缓存数据
+        return cacheData;

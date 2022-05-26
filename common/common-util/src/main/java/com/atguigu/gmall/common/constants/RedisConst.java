@@ -6,7 +6,10 @@ public class RedisConst {
 
     public static final String SKU_CACHE_KEY_PREFIX = "sku:detail";
 
-
     public static final String BLOOM_SKUID_KEY = "bloom:skuid";
+
     public static final String LOCK_PREFIX = "lock";
+    public static final String SKUDETAIL_LOCK_PREFIX = "lock:detail";
+    public static final String SALE_ATTR_CACHE_KEY = "sale:attr";
+
 }

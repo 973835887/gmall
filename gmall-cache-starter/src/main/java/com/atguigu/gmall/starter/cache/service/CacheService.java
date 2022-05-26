@@ -1,6 +1,5 @@
-package com.atguigu.gmall.cache.service;
+package com.atguigu.gmall.starter.cache.service;
 
-import com.atguigu.gmall.model.to.CategoryAndChildsTo;
 import com.fasterxml.jackson.core.type.TypeReference;
 
 import java.util.List;

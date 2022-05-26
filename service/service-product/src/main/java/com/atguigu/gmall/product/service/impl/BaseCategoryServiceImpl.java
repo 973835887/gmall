@@ -10,9 +10,9 @@ import com.atguigu.gmall.product.mapper.BaseCategoryMapper1;
 import com.atguigu.gmall.product.mapper.BaseCategoryMapper2;
 import com.atguigu.gmall.product.mapper.BaseCategoryMapper3;
 import com.atguigu.gmall.product.service.BaseCategoryService;
-import com.atguigu.gmall.cache.service.CacheService;
+import com.atguigu.gmall.starter.cache.aop.annotation.Cache;
+import com.atguigu.gmall.starter.cache.service.CacheService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.fasterxml.jackson.core.type.TypeReference;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,12 +30,14 @@ public class BaseCategoryServiceImpl implements BaseCategoryService {
     CacheService cacheService;
 
     @Override
+    @Cache(cacheKey = "categorys:level:1")
     public List<BaseCategory1> getAllCategory1() {
 
         return baseCategoryMapper1.selectList(null);
     }
 
     @Override
+    @Cache(cacheKey = "categorys:level:2:#{#args[0]}")
     public List<BaseCategory2> getCategory2ByCategory1Id(Long category1Id) {
 
         QueryWrapper<BaseCategory2> queryWrapper = new QueryWrapper<>();
@@ -45,6 +47,7 @@ public class BaseCategoryServiceImpl implements BaseCategoryService {
     }
 
     @Override
+    @Cache(cacheKey = "categorys:level:3:#{#args[0]}")
     public List<BaseCategory3> getCategory3ByCategory1Id(Long category2Id) {
         QueryWrapper<BaseCategory3> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("category2_id",category2Id);
@@ -55,21 +58,24 @@ public class BaseCategoryServiceImpl implements BaseCategoryService {
 
     //获取所有的分类数据以及子分类
     @Override
+    @Cache(cacheKey = RedisConst.CATEGORY_KEY)
     public List<CategoryAndChildsTo> getAllCategoryAndChilds() {
-        //1,查询缓存
-        Object cacheData = cacheService.getCacheData(RedisConst.CATEGORY_KEY, new TypeReference<List<CategoryAndChildsTo>>() {
-        });
+//        //1,查询缓存
+//        Object cacheData = cacheService.getCacheData(RedisConst.CATEGORY_KEY, new TypeReference<List<CategoryAndChildsTo>>() {
+//        });
+//
+//        if (cacheData == null){
+//            //2,缓存没有,查询数据库
+//            List<CategoryAndChildsTo> categoryAndChildsToList = baseCategoryMapper1.getAllCategoryAndChilds();
+//            //3.放入缓存
+//            cacheService.save(RedisConst.CATEGORY_KEY,categoryAndChildsToList);
+//            return categoryAndChildsToList;
+//        }
 
-        if (cacheData == null){
-            //2,缓存没有,查询数据库
-            List<CategoryAndChildsTo> categoryAndChildsToList = baseCategoryMapper1.getAllCategoryAndChilds();
-            //3.放入缓存
-            cacheService.save(RedisConst.CATEGORY_KEY,categoryAndChildsToList);
-            return categoryAndChildsToList;
-        }
+        List<CategoryAndChildsTo> childs = baseCategoryMapper1.getAllCategoryAndChilds();
 
         //4.返回缓存数据
-        return (List<CategoryAndChildsTo>) cacheData;
+        return childs;
     }
 
     //获取一个skuId的层级信息
