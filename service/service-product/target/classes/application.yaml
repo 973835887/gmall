@@ -1,11 +1,13 @@
 server:
   port: 7000
 spring:
-  datasource:
-    url: jdbc:mysql://192.168.5.130:3306/gmall_product?useSSL=false
-    username: root
-    password: root
-    driver-class-name: com.mysql.jdbc.Driver
+  profiles:
+    include: sharding
+#  datasource:
+#    url: jdbc:mysql://192.168.5.130:3306/gmall_product?useSSL=false
+#    username: root
+#    password: root
+#    driver-class-name: com.mysql.jdbc.Driver
 #springboot默认上传最大值是1mb 设置最大发送文件100mb以及最大文件100mb
   servlet:
     multipart:
@@ -18,6 +20,7 @@ spring:
       pool:
         max-active: 100
         min-idle: 0
+
 
 
 #mybatis-plus:
