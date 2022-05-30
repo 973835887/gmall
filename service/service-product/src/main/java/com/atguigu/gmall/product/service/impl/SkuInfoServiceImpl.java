@@ -1,6 +1,14 @@
 package com.atguigu.gmall.product.service.impl;
+import com.atguigu.gmall.model.list.SearchAttr;
+import com.atguigu.gmall.product.domain.BaseCategoryView;
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.google.common.collect.Lists;
+import java.util.Date;
 
 import com.atguigu.gmall.common.result.Result;
+import com.atguigu.gmall.feign.list.SearchFeignClient;
+import com.atguigu.gmall.model.list.Goods;
 import com.atguigu.gmall.model.product.*;
 import com.atguigu.gmall.product.mapper.*;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -39,9 +47,21 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoMapper, SkuInfo>
     @Autowired
     SpuSaleAttrMapper spuSaleAttrMapper;
 
+    @Autowired
+    SearchFeignClient searchFeignClient;
+
     @Qualifier("skuIdBloom")
     @Autowired
     RBloomFilter<Object> skuIdBloom;
+
+    @Autowired
+    BaseTrademarkMapper baseTrademarkMapper;
+
+    @Autowired
+    BaseCategoryViewMapper baseCategoryViewMapper;
+
+    @Autowired
+    BaseAttrInfoMapper baseAttrInfoMapper;
 
     @Override
     public void saveSkuInfo(SkuInfo skuInfo) {
@@ -82,10 +102,58 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoMapper, SkuInfo>
     //下架
     @Override
     public void updateStatus(Long skuId, int status) {
-        //保存 is_sale 状态
+        //1.  保存 is_sale 状态
         skuInfoMapper.updateStatus(skuId,status);
-        //TODO 给ES 保存/删除
+
+        if (status == 1){
+            //2. 给ES 保存/删除
+            Goods goods = this.getSkuInfoForSearch(skuId);
+
+            //3. 保存到es
+            searchFeignClient.saveGoods(goods);
+        }else {
+            //4. 去es中删除数据
+            if (status == 0){
+                searchFeignClient.deleteGoods(skuId);
+            }
+        }
     }
+
+    @Override
+    public Goods getSkuInfoForSearch(Long skuId) {
+        Goods goods = new Goods();
+
+        //1.查询skuinfo信息并封装
+        SkuInfo skuInfo = skuInfoMapper.selectById(skuId);
+        goods.setId(skuInfo.getId());
+        goods.setDefaultImg(skuInfo.getSkuDefaultImg());
+        goods.setTitle(skuInfo.getSkuName());
+        goods.setPrice(skuInfo.getPrice().doubleValue());
+        goods.setCreateTime(new Date());//上架时间
+        //2.封装品牌信息
+        BaseTrademark baseTrademark = baseTrademarkMapper.selectById(skuInfo.getTmId());
+        goods.setTmId(baseTrademark.getId());
+        goods.setTmName(baseTrademark.getTmName());
+        goods.setTmLogoUrl(baseTrademark.getLogoUrl());
+        //3.封装分类信息
+        QueryWrapper<BaseCategoryView> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("category3_id",skuInfo.getCategory3Id());
+        BaseCategoryView baseCategoryView = baseCategoryViewMapper.selectOne(queryWrapper);
+        goods.setCategory1Id(baseCategoryView.getCategory1Id());
+        goods.setCategory1Name(baseCategoryView.getCategory1Name());
+        goods.setCategory2Id(baseCategoryView.getCategory2Id());
+        goods.setCategory2Name(baseCategoryView.getCategory2Name());
+        goods.setCategory3Id(baseCategoryView.getCategory3Id());
+        goods.setCategory3Name(baseCategoryView.getCategory3Name());
+        //4.热度分
+        goods.setHotScore(0L);
+        //5.当前sku的所有平台属性名和值 attrId attrValue attrName
+        List<SearchAttr> searchAttrs = baseAttrInfoMapper.getSkuBaseAttrNameAndValue(skuId);
+        goods.setAttrs(searchAttrs);
+
+        return goods;
+    }
+
 
     //查询商品价格
     @Override
@@ -105,6 +173,8 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoMapper, SkuInfo>
         List<Long>  ids = skuInfoMapper.getSkuIds();
         return ids;
     }
+
+
 
 
 }
