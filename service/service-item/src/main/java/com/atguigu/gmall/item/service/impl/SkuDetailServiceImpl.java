@@ -3,6 +3,7 @@ package com.atguigu.gmall.item.service.impl;
 import com.atguigu.gmall.common.constants.RedisConst;
 import com.atguigu.gmall.common.result.Result;
 import com.atguigu.gmall.common.util.JSONs;
+import com.atguigu.gmall.feign.list.SearchFeignClient;
 import com.atguigu.gmall.feign.product.ProductFeignClient;
 import com.atguigu.gmall.model.product.BaseCategoryView;
 import com.atguigu.gmall.model.product.SkuInfo;
@@ -52,12 +53,25 @@ public class SkuDetailServiceImpl implements SkuDetailService {
     @Autowired
     RedissonClient redissonClient;
 
+    @Autowired
+    SearchFeignClient searchFeignClient;
+
     @Cache(cacheKey = RedisConst.SKU_CACHE_KEY_PREFIX+":#{#args[0]}",bloomName = "skuIdBloom",bloomValue ="#{#args[0]}")
     @Override
     public SkuDetailTo getDetail(Long skuId) {
         log.info("正在从数据库等确定商品详情:{}"+skuId);
         SkuDetailTo detail = getDetailFromDb(skuId);
         return detail;
+    }
+
+    @Override
+    public void incrHotScore(Long skuId) {
+        //累积到100人以后增加一次，去redis中热度+1
+        Double score = redisTemplate.opsForZSet().incrementScore(RedisConst.SKU_HOTSCORE, skuId.toString(), 1.0);
+        if(score%100 == 0){
+            //远程调用ES
+            searchFeignClient.updateHotScore(skuId,score.longValue());
+        }
     }
 
     //查询商品详情;使用redisson提供的分布式锁

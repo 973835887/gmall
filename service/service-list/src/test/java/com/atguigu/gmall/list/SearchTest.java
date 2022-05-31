@@ -18,6 +18,14 @@ public class SearchTest {
     public void searchTest(){
         SearchParam param = new SearchParam();
         param.setCategory3Id(61L);
+        param.setPageNo(2);
+        param.setPageSize(3);
+        param.setKeyword("手机");
+        param.setTrademark("4:小米");
+        String[] props = new String[]{"4:64GB:机身存储"};
+        param.setProps(props);
+        param.setOrder("2:desc");
+
 
         goodsSearchService.search(param);
     }

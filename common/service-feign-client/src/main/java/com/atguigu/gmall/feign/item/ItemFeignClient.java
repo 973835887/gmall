@@ -16,5 +16,5 @@ public interface ItemFeignClient {
     // category2Id category2Name
     // category3Id category3Name
     @GetMapping("/sku/detail/{skuId}")
-    public Result<SkuDetailTo> getSku(@PathVariable Long skuId);
+    Result<SkuDetailTo> getSku(@PathVariable Long skuId);
 }

@@ -23,8 +23,11 @@ public class SkuItemRpcController {
     // category3Id category3Name
     @GetMapping("/sku/detail/{skuId}")
     public Result<SkuDetailTo> getSku(@PathVariable Long skuId){
-
+        //代理对象
         SkuDetailTo skuDetailTo = skuDetailService.getDetail(skuId);
+
+        //增加商品热度。 延迟更热度。
+        skuDetailService.incrHotScore(skuId); //200ms
         return Result.ok(skuDetailTo);
     }
 }

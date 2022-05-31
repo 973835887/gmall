@@ -20,7 +20,7 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 //@EnableFeignClients(basePackages
 //@EnableAppAutoRedissonAndCache
 @EnableAutoDoubleThreadPool
-@EnableFeignClients(basePackages = "com.atguigu.gmall.feign.product")
+@EnableFeignClients(basePackages = {"com.atguigu.gmall.feign.product","com.atguigu.gmall.feign.list"})
 @Configuration
 public class ItemConfig {
 }

@@ -16,7 +16,13 @@ public class BloomController {
 
     @GetMapping("/rebuild")
     public Result rebuildBloom(){
-        skuIdBloomTask.rebuildBloom();
+        try {
+            skuIdBloomTask.rebuildBloom();
+            System.out.println("布隆重建完成  " );
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("布隆重建失败 " + e);
+        }
         return Result.ok();
     }
 }

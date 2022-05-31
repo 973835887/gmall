@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 
 @Controller
@@ -27,10 +28,11 @@ public class ListController {
     //@RequestParam(value = "pageNo",required = false) Long pageNo,
     //@RequestParam(value = "keyword",required = false) String keyword
     @GetMapping("/list.html")
-    public String searchPage(SearchParam param, Model model){
+    public String searchPage(SearchParam param, Model model, HttpServletRequest request){
 
         //todo 远程调用检索服务去检索
         Result<GoodsSearchResultVo> searchGoods = searchFeignClient.searchGoods(param);
+
         if (searchGoods.isOk()){
             GoodsSearchResultVo data = searchGoods.getData();
             //1.展示到页面,原来参数原封不动给页面
@@ -49,7 +51,7 @@ public class ListController {
             model.addAttribute("trademarkList", data.getTrademarkList());
 
             //6.检索条件区 : 平台属性列表: attrList
-            model.addAttribute("attrList", data.getAttrsList());
+            model.addAttribute("attrsList", data.getAttrsList());
 
             //7.排序信息: Bean (type.sort)
             model.addAttribute("orderMap", data.getOrderMap());

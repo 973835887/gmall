@@ -13,4 +13,7 @@ public interface GoodsSearchService {
 
     //检索
     GoodsSearchResultVo search(SearchParam param);
+
+
+    void updateHotScore(Long skuId, Long score);
 }

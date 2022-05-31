@@ -9,6 +9,8 @@ import com.atguigu.gmall.model.vo.GoodsSearchResultVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+
 @RestController
 @RequestMapping("/rpc/inner/es")
 public class GoodsRpcController {
@@ -32,8 +34,22 @@ public class GoodsRpcController {
 
     //检索商品数据
     @PostMapping("/goods/search")
-    public Result<GoodsSearchResultVo> searchGoods(@RequestBody SearchParam param){
+    public Result<GoodsSearchResultVo> searchGoods(@RequestBody SearchParam param, HttpServletRequest request){
         GoodsSearchResultVo vo = goodsSearchService.search(param);
         return Result.ok(vo);
     }
+
+    /**
+     * 更新某个skuId对应商品的热度
+     * @param skuId
+     * @return
+     */
+    @GetMapping("/goods/incrHotScore/{skuId}")
+    public Result updateHotScore(@PathVariable("skuId") Long skuId,
+                                 @RequestParam("hotScore") Long score){
+        goodsSearchService.updateHotScore(skuId,score);
+
+        return Result.ok();
+    }
+
 }
