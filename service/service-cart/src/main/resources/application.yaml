@@ -1,0 +1,9 @@
+server:
+  port: 12000
+
+spring:
+  redis:
+    host: 192.168.5.130
+    password: root
+  autoconfigure:
+    exclude: org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration

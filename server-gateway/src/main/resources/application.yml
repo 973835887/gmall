@@ -1,6 +1,10 @@
 server:
   port: 80
 spring:
+  redis:
+    host: 192.168.5.130
+    password: root
+
   cloud:
     gateway:
       globalcors:
@@ -15,11 +19,33 @@ spring:
           uri: lb://service-product
           predicates:
             - Path=/admin/product/**
-        - id: web_all_route
-          uri: lb://web-all
-          predicates:
-            - Host=**.gmall.com,gmall.com
+
         - id: lb_test
           uri: lb://service-item
           predicates:
             - Path=/redis/incr/**
+
+        - id: user_route
+          uri: lb://service-user
+          predicates:
+            - Path=/api/user/**
+
+        - id: web_all_route
+          uri: lb://web-all
+          predicates:
+            - Host=**.gmall.com,gmall.com
+
+
+app:
+  auth:
+    anyonturls:
+      - /js/**
+      - /css/**
+      - /img/**
+      - /static/**
+    denyurls:
+      - /rpc/inner/**
+    authurls:
+      - /order.html
+    loginPage: http://passport.gmall.com/login.html
+

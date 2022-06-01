@@ -38,10 +38,10 @@ public class JSONs {
     }
 
 
-    public static <T> T strToObj(String catregorys, TypeReference<T> typeReference) {
+    public static <T> T strToObj(String key, TypeReference<T> typeReference) {
         T t = null;
         try {
-            t = objectMapper.readValue(catregorys, typeReference);
+            t = objectMapper.readValue(key, typeReference);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }

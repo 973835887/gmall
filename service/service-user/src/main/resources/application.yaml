@@ -1,0 +1,13 @@
+server:
+  port: 11000
+
+spring:
+  redis:
+    host: 192.168.5.130
+    password: root
+    lettuce:
+      pool:
+        max-active: 100
+        min-idle: 0
+  profiles:
+    include: sharding

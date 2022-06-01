@@ -1,0 +1,32 @@
+{
+  "groups": [
+    {
+      "name": "app.auth",
+      "type": "caom.atguigu.gmall.gateway.properties.AuthProperties",
+      "sourceType": "caom.atguigu.gmall.gateway.properties.AuthProperties"
+    }
+  ],
+  "properties": [
+    {
+      "name": "app.auth.anyonturls",
+      "type": "java.util.List<java.lang.String>",
+      "sourceType": "caom.atguigu.gmall.gateway.properties.AuthProperties"
+    },
+    {
+      "name": "app.auth.authurls",
+      "type": "java.util.List<java.lang.String>",
+      "sourceType": "caom.atguigu.gmall.gateway.properties.AuthProperties"
+    },
+    {
+      "name": "app.auth.denyurls",
+      "type": "java.util.List<java.lang.String>",
+      "sourceType": "caom.atguigu.gmall.gateway.properties.AuthProperties"
+    },
+    {
+      "name": "app.auth.login-page",
+      "type": "java.lang.String",
+      "sourceType": "caom.atguigu.gmall.gateway.properties.AuthProperties"
+    }
+  ],
+  "hints": []
+}

@@ -1,0 +1,67 @@
+{
+  "groups": [
+    {
+      "name": "app.minio",
+      "type": "com.atguigu.gmall.minio.config.MinioProperties",
+      "sourceType": "com.atguigu.gmall.minio.config.MinioProperties"
+    },
+    {
+      "name": "app.threadpool",
+      "type": "com.atguigu.gmall.config.threadpoolconfig.AppThreadPoolProperties",
+      "sourceType": "com.atguigu.gmall.config.threadpoolconfig.AppThreadPoolProperties"
+    }
+  ],
+  "properties": [
+    {
+      "name": "app.minio.access-key",
+      "type": "java.lang.String",
+      "sourceType": "com.atguigu.gmall.minio.config.MinioProperties"
+    },
+    {
+      "name": "app.minio.bucket",
+      "type": "java.lang.String",
+      "sourceType": "com.atguigu.gmall.minio.config.MinioProperties"
+    },
+    {
+      "name": "app.minio.endpoint",
+      "type": "java.lang.String",
+      "sourceType": "com.atguigu.gmall.minio.config.MinioProperties"
+    },
+    {
+      "name": "app.minio.secret-key",
+      "type": "java.lang.String",
+      "sourceType": "com.atguigu.gmall.minio.config.MinioProperties"
+    },
+    {
+      "name": "app.threadpool.core-pool-size",
+      "type": "java.lang.Integer",
+      "sourceType": "com.atguigu.gmall.config.threadpoolconfig.AppThreadPoolProperties"
+    },
+    {
+      "name": "app.threadpool.handler",
+      "type": "java.util.concurrent.RejectedExecutionHandler",
+      "sourceType": "com.atguigu.gmall.config.threadpoolconfig.AppThreadPoolProperties"
+    },
+    {
+      "name": "app.threadpool.keep-alive-time",
+      "type": "java.lang.Long",
+      "sourceType": "com.atguigu.gmall.config.threadpoolconfig.AppThreadPoolProperties"
+    },
+    {
+      "name": "app.threadpool.maximum-pool-size",
+      "type": "java.lang.Integer",
+      "sourceType": "com.atguigu.gmall.config.threadpoolconfig.AppThreadPoolProperties"
+    },
+    {
+      "name": "app.threadpool.queue-size",
+      "type": "java.lang.Integer",
+      "sourceType": "com.atguigu.gmall.config.threadpoolconfig.AppThreadPoolProperties"
+    },
+    {
+      "name": "app.threadpool.unit",
+      "type": "java.util.concurrent.TimeUnit",
+      "sourceType": "com.atguigu.gmall.config.threadpoolconfig.AppThreadPoolProperties"
+    }
+  ],
+  "hints": []
+}

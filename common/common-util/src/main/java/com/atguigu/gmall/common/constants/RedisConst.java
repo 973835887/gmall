@@ -13,4 +13,5 @@ public class RedisConst {
     public static final String SALE_ATTR_CACHE_KEY = "sale:attr";
 
     public static final String SKU_HOTSCORE = "sku:hotscore";
+    public static final String USER_LOGIN_PREFIX = "user:login:";
 }
