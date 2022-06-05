@@ -16,7 +16,7 @@ public class IndexController {
     @Autowired
     ProductFeignClient productFeignClient;
 
-    @GetMapping("/")
+    @GetMapping({"/","/index.html"})
     public String indexImage(Model model){
 
         //远程调用其他微服务,查询页面需要的数据

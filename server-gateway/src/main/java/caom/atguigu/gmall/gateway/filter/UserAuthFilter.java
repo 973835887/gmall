@@ -104,7 +104,16 @@ public class UserAuthFilter implements GlobalFilter {
         //4.正常请求
         String token = getToken(request);
         if (StringUtils.isEmpty(token)){
-            return chain.filter(exchange);
+            //没带token;直接放行,看tempId是否携带
+            //透传userTempId
+           String userTempId = getUserTempId(request);
+
+            ServerHttpRequest newRequest = exchange.getRequest().mutate().header("userTempId",userTempId).build();
+
+            ServerWebExchange build = exchange.mutate().request(newRequest).response(exchange.getResponse()).build();
+
+
+            return chain.filter(build);
         }else {
             boolean validate = validateToken(request);
             if (!validate){
@@ -115,9 +124,13 @@ public class UserAuthFilter implements GlobalFilter {
                 String ipAddress = IpUtil.getGatwayIpAddress(orginRequest);
                 UserInfo userInfo = getRedisTokenValue(token, ipAddress);
 
+                //透传userTempId
+                String userTempId = getUserTempId(request);
+
                 //自己加一个请求头:原请求头不能修改
-//                orginRequest.getHeaders().add("UserId",userInfo.getId().toString());
-                ServerHttpRequest newRequest = exchange.getRequest().mutate().header("UserId", userInfo.getId().toString()).build();
+
+                //orginRequest.getHeaders().add("UserId",userInfo.getId().toString());
+                ServerHttpRequest newRequest = exchange.getRequest().mutate().header("UserId", userInfo.getId().toString()).header("UserTempId",userTempId).build();
 
                 ServerWebExchange build = exchange.mutate().request(newRequest).response(exchange.getResponse()).build();
 
@@ -130,6 +143,20 @@ public class UserAuthFilter implements GlobalFilter {
 //
 //        return filter;
 
+    }
+
+    private String getUserTempId(ServerHttpRequest request) {
+            //获取用户临时tempid
+        //1.获取到token[Cookie:token=xx]   请求头中含有[token=xxx]
+        String userTempId ="";
+        HttpCookie cookie = request.getCookies().getFirst("userTempId");
+        if (cookie != null){
+            userTempId = cookie.getValue();
+        }else {
+            //token在请求头中
+            userTempId = request.getHeaders().getFirst("userTempId");
+        }
+        return userTempId;
     }
 
     //打回到登录页面
