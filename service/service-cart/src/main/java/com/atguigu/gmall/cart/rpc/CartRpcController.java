@@ -14,7 +14,7 @@ public class CartRpcController {
     @Autowired
     CartService cartService;
 
-
+    //添加商品到购物车
     @GetMapping("/add/{skuId}")
     public Result<CartItem> addSkuToCart(@PathVariable Long skuId,
                                          @RequestParam("skuNum") Integer skuNum){
@@ -22,5 +22,12 @@ public class CartRpcController {
         CartItem cartItem = cartService.addSkuToCart(skuId,skuNum);
 
         return Result.ok(cartItem);
+    }
+
+    //删除选中的商品
+    @GetMapping("/delete/Checked")
+    public Result deleteChecked(){
+        cartService.deleteChecked();
+        return Result.ok();
     }
 }

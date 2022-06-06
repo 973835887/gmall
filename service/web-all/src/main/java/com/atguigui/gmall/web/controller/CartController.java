@@ -47,4 +47,11 @@ public class CartController {
 
         return "cart/addCart";
     }
+
+    //删除选中的商品
+    @GetMapping("/cart/deleteChecked")
+    public String deletePage(){
+        cartFeignClient.deleteChecked();
+        return "cart/index";
+    }
 }

@@ -17,7 +17,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Configuration
 @Slf4j
 public class AppThreadPoolAutoConfiguration {
-
     /**
      * int corePoolSize,
      * int maximumPoolSize,

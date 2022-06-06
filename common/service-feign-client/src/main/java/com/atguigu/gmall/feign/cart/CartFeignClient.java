@@ -15,4 +15,8 @@ public interface CartFeignClient {
     //把商品添加到购物车
     @GetMapping("/add/{skuId}")
     Result<CartItem> addSkuToCart(@PathVariable Long skuId, @RequestParam("skuNum") Integer skuNum);
+
+    //删除选中的商品
+    @GetMapping("/delete/Checked")
+    Result deleteChecked();
 }

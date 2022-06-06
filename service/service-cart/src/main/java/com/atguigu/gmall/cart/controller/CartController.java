@@ -4,9 +4,7 @@ import com.atguigu.gmall.cart.service.CartService;
 import com.atguigu.gmall.common.result.Result;
 import com.atguigu.gmall.model.cart.CartItem;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -24,6 +22,28 @@ public class CartController {
        List<CartItem> cartItems = cartService.getCartItems();
 
         return Result.ok(cartItems);
+    }
+
+    //添加或者删减购物车数量
+    @PostMapping("addToCart/{skuId}/{skuNum}")
+    public Result addToCart(@PathVariable Long skuId,@PathVariable("skuNum") Integer skuNum){
+        cartService.updateCartItemNum(skuId,skuNum);
+        return Result.ok();
+    }
+
+    //更改购物车中商品的选中数量
+//    /checkCart/41/0
+    @GetMapping("/checkCart/{skuId}/{status}")
+    public Result checkCart(@PathVariable Long skuId,@PathVariable("status") Integer status){
+        cartService.updateCartItemStatus(skuId,status);
+        return Result.ok();
+    }
+
+    //删除购物车中指定的商品
+    @DeleteMapping("/deleteCart/{skuId}")
+    public Result deleteCartItem(@PathVariable Long skuId){
+        cartService.deleteCartItem(skuId);
+        return Result.ok();
     }
 
 }

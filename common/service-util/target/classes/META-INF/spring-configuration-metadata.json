@@ -35,7 +35,8 @@
     {
       "name": "app.threadpool.core-pool-size",
       "type": "java.lang.Integer",
-      "sourceType": "com.atguigu.gmall.config.threadpoolconfig.AppThreadPoolProperties"
+      "sourceType": "com.atguigu.gmall.config.threadpoolconfig.AppThreadPoolProperties",
+      "defaultValue": 4
     },
     {
       "name": "app.threadpool.handler",
@@ -45,17 +46,20 @@
     {
       "name": "app.threadpool.keep-alive-time",
       "type": "java.lang.Long",
-      "sourceType": "com.atguigu.gmall.config.threadpoolconfig.AppThreadPoolProperties"
+      "sourceType": "com.atguigu.gmall.config.threadpoolconfig.AppThreadPoolProperties",
+      "defaultValue": 5
     },
     {
       "name": "app.threadpool.maximum-pool-size",
       "type": "java.lang.Integer",
-      "sourceType": "com.atguigu.gmall.config.threadpoolconfig.AppThreadPoolProperties"
+      "sourceType": "com.atguigu.gmall.config.threadpoolconfig.AppThreadPoolProperties",
+      "defaultValue": 4
     },
     {
       "name": "app.threadpool.queue-size",
       "type": "java.lang.Integer",
-      "sourceType": "com.atguigu.gmall.config.threadpoolconfig.AppThreadPoolProperties"
+      "sourceType": "com.atguigu.gmall.config.threadpoolconfig.AppThreadPoolProperties",
+      "defaultValue": 1000
     },
     {
       "name": "app.threadpool.unit",
