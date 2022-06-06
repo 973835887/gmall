@@ -21,4 +21,5 @@ public class RedisConst {
 
     public static final Duration TEMP_CART_TIMMEOUT = Duration.ofDays(90);
     public static final Long CART_SIZE_LIMIT = 200L;
+    public static final String NO_REPEAT_TOKEN = "norepeat:token:";
 }

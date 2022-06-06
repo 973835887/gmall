@@ -72,6 +72,7 @@ spring:
             sharding-column: user_id
             shardingAlgorithmName: user-id-db-shard
 
+
         tables:  #指定逻辑表规则
           order_info:
             actualDataNodes: order-$->{0..1}-w.order_info_$->{1..3}
@@ -79,6 +80,18 @@ spring:
               standard:
                 shardingColumn: user_id  #告诉sharing如果插入或者查询数据。根据那一列去那张表
                 shardingAlgorithmName: user-id-table-shard
+
+          order_detail:
+            actualDataNodes: order-$->{0..1}-w.order_detail_$->{1..3}
+            tableStrategy:
+              standard:
+                shardingColumn: user_id
+                shardingAlgorithmName: user-id-detail-table-shard
+
+        #声明绑定表的关系
+        binding-tables:
+          - order_info
+          - order_detail
 
 
         sharding-algorithms:
@@ -91,6 +104,12 @@ spring:
             type: INLINE
             props:
               algorithm-expression: order_info_$->{user_id % 3 + 1}
+
+          user-id-detail-table-shard:
+            type: INLINE
+            props:
+              algorithm-expression: order_detail_$->{user_id % 3 + 1}
+
 
 
 

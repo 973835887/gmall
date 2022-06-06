@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.List;
+
 @RequestMapping("/rpc/inner/cart")
 @FeignClient("service-cart")
 public interface CartFeignClient {
@@ -19,4 +21,8 @@ public interface CartFeignClient {
     //删除选中的商品
     @GetMapping("/delete/Checked")
     Result deleteChecked();
+
+    //获取选中的商品列表
+    @GetMapping("/check/list")
+    Result<List<CartItem>> getCheckItem();
 }

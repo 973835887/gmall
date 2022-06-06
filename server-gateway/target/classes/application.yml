@@ -20,10 +20,10 @@ spring:
           predicates:
             - Path=/admin/product/**
 
-        - id: lb_test
-          uri: lb://service-item
+        - id: order_route
+          uri: lb://service-order
           predicates:
-            - Path=/redis/incr/**
+            - Path=/api/order/**
 
         - id: user_route
           uri: lb://service-user
@@ -52,5 +52,7 @@ app:
       - /rpc/inner/**
     authurls:
       - /order.html
+      - /trade.html
+      - /**/auth/**
     loginPage: http://passport.gmall.com/login.html
 

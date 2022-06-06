@@ -1,6 +1,7 @@
 package com.atguigu.gmall.cart.service;
 
 import com.atguigu.gmall.model.cart.CartItem;
+import io.minio.messages.Item;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -44,5 +45,8 @@ public interface CartService {
 
     //异步提交给线程池;批量更新购物车中的商品价格
     void updatePriceBatch(String cartkey);
+
+    //获取所有选中的商品列表
+    List<CartItem> getCheckItem();
 
 }

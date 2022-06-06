@@ -12,6 +12,7 @@ import com.atguigu.gmall.model.cart.CartItem;
 import com.atguigu.gmall.model.product.SkuInfo;
 import com.atguigu.gmall.model.to.UserAuthTo;
 import com.fasterxml.jackson.core.type.TypeReference;
+import io.minio.messages.Item;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.BoundHashOperations;
@@ -201,6 +202,21 @@ public class CartServiceImpl implements CartService {
             });
         },otherPool);
     }
+
+    //获取所有选中的商品列表
+    @Override
+    public List<CartItem> getCheckItem() {
+        //1.获取购物车中的所有商品列表
+        List<CartItem> cartItems = getCartItems();
+
+        //2.过滤选中的
+        List<CartItem> cartItemList = cartItems.stream()
+                .filter((item) -> item.getIsChecked() == 1)
+                .collect(Collectors.toList());
+
+        return cartItemList;
+    }
+
 
     private String getUserCartKey(){
         UserAuthTo userAuth = AuthUtil.getUserAuth();

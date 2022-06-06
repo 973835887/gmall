@@ -4,3 +4,14 @@ server:
 spring:
   profiles:
     include: sharding
+  redis:
+    host: 192.168.5.130
+    password: root
+    lettuce:
+      pool:
+        max-active: 100
+        min-idle: 0
+
+app:
+  props:
+    ware-url: http://localhost:14000
