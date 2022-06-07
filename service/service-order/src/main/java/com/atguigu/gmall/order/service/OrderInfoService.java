@@ -1,5 +1,6 @@
 package com.atguigu.gmall.order.service;
 
+import com.atguigu.gmall.model.enums.ProcessStatus;
 import com.atguigu.gmall.model.order.OrderInfo;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -10,4 +11,6 @@ import com.baomidou.mybatisplus.extension.service.IService;
 */
 public interface OrderInfoService extends IService<OrderInfo> {
 
+    //关单 修改订单状态
+    void updateStatus(ProcessStatus unpaid, ProcessStatus closed, Long userId, Long orderId);
 }

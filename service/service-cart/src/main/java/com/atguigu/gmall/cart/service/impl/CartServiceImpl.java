@@ -13,6 +13,7 @@ import com.atguigu.gmall.model.product.SkuInfo;
 import com.atguigu.gmall.model.to.UserAuthTo;
 import com.fasterxml.jackson.core.type.TypeReference;
 import io.minio.messages.Item;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.BoundHashOperations;
@@ -29,6 +30,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class CartServiceImpl implements CartService {
 
     @Autowired
@@ -320,7 +322,12 @@ public class CartServiceImpl implements CartService {
                 .toArray();
 
         if (objects!=null&&objects.length>0){
-            deleteCheckeds(cartkey,objects);
+            try {
+                deleteCheckeds(cartkey,objects);
+                log.info("商品删除完成");
+            } catch (Exception e) {
+                log.error("删除失败"+e);
+            }
         }
 
     }

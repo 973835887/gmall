@@ -1,10 +1,13 @@
 package com.atguigu.gmall.order.service.impl;
 
+import com.alibaba.fastjson.JSON;
+import com.atguigu.gmall.common.constants.MqConst;
 import com.atguigu.gmall.common.constants.RedisConst;
 import com.atguigu.gmall.common.execption.GmallException;
 import com.atguigu.gmall.common.result.Result;
 import com.atguigu.gmall.common.result.ResultCodeEnum;
 import com.atguigu.gmall.common.util.AuthUtil;
+import com.atguigu.gmall.common.util.JSONs;
 import com.atguigu.gmall.feign.cart.CartFeignClient;
 import com.atguigu.gmall.feign.product.ProductFeignClient;
 import com.atguigu.gmall.feign.user.UserFeignClient;
@@ -13,6 +16,7 @@ import com.atguigu.gmall.model.cart.CartItem;
 import com.atguigu.gmall.model.enums.OrderStatus;
 import com.atguigu.gmall.model.enums.PaymentWay;
 import com.atguigu.gmall.model.enums.ProcessStatus;
+import com.atguigu.gmall.model.mqto.order.OrderCreateTo;
 import com.atguigu.gmall.model.order.OrderDetail;
 import com.atguigu.gmall.model.order.OrderInfo;
 import com.atguigu.gmall.model.to.UserAuthTo;
@@ -23,19 +27,26 @@ import com.atguigu.gmall.model.vo.order.OrderSubmitVo;
 import com.atguigu.gmall.order.service.OrderDetailService;
 import com.atguigu.gmall.order.service.OrderInfoService;
 import com.atguigu.gmall.order.service.OrderService;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
 
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class OrderServiceImpl implements OrderService {
 
     @Autowired
@@ -58,6 +69,12 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     OrderDetailService orderDetailService;
+
+    @Autowired
+    ThreadPoolExecutor corePool;
+
+    @Autowired
+    RabbitTemplate rabbitTemplate;
 
     //订单提交页面详情
     @Override
@@ -190,6 +207,21 @@ public class OrderServiceImpl implements OrderService {
         //4.保存订单
         Long orderId = saveOrder(orderSubmitVo);
 
+        //5.删除购物车中选中的商品
+        RequestAttributes oldeReq = RequestContextHolder.getRequestAttributes();
+        corePool.submit(()->{
+            RequestContextHolder.setRequestAttributes(oldeReq);
+            try {
+                cartFeignClient.deleteChecked();
+                log.info("商品购物车订单删除完成");
+            } catch (Exception e) {
+                log.error("提交订单之后删除购物车商品异常,{}"+e);
+            }
+
+        });
+
+        //6.给MQ发一个消息,表示某个订单创建成功了,orderId userId
+
 
         return orderId;
     }
@@ -209,7 +241,22 @@ public class OrderServiceImpl implements OrderService {
         //保存订单项
        List<OrderDetail> orderDetails = prepareOrderDetail(orderInfo);
         orderDetailService.saveBatch(orderDetails);
+
+        //订单存到数据库就发消息
+        sendOrderCreateMsg(orderInfo.getId());
+
         return orderInfo.getId();
+    }
+
+    //给MQ发消息
+    @Override
+    public void sendOrderCreateMsg(Long orderId) {
+        Long userId = AuthUtil.getUserAuth().getUserId();
+        OrderCreateTo orderCreateTo = new OrderCreateTo(orderId,userId);
+        String json = JSONs.toStr(orderCreateTo);
+
+        //String exchange, String routingKey, Object message
+        rabbitTemplate.convertAndSend(MqConst.ORDER_EVENT_EXCHANGE,MqConst.RK_ORDER_CREATE,json);
     }
 
     //准备订单项的数据

@@ -18,6 +18,6 @@ public class OrderRestController {
         //TODO 提交订单
         Long orderId = orderService.submitOrder(tradeNo, orderSubmitVo);
 
-        return Result.ok(orderId);
+        return Result.ok(orderId.toString());
     }
 }

@@ -17,4 +17,7 @@ public interface OrderService {
 
     //保存订单
     Long saveOrder(OrderSubmitVo orderSubmitVo);
+
+    //订单创建完成后,给MQ发送消息
+    void sendOrderCreateMsg(Long orderId);
 }

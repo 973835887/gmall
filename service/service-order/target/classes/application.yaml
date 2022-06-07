@@ -11,6 +11,19 @@ spring:
       pool:
         max-active: 100
         min-idle: 0
+  rabbitmq:
+    host: 192.168.5.130
+    port: 5672
+    username: admin
+    password: admin
+    virtual-host: /
+    publisher-returns: true
+    # 发送端确认
+    publisher-confirm-type: correlated
+    listener:
+      type: simple
+      simple:
+        acknowledge-mode: manual #手动确认模式
 
 app:
   props:
