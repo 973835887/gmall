@@ -14,7 +14,8 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableFeignClients({"com.atguigu.gmall.feign.cart",
                     "com.atguigu.gmall.feign.product",
                     "com.atguigu.gmall.feign.user",
-                    "com.atguigu.gmall.feign.ware"})
+                    "com.atguigu.gmall.feign.ware",
+                    "com.atguigu.gmall.feign.pay"})
 @EnableFeignAuthHeaderInterceptor
 @EnableAutoExceptionHandle
 @EnableTransactionManagement

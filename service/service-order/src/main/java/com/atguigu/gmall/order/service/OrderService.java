@@ -1,5 +1,6 @@
 package com.atguigu.gmall.order.service;
 
+import com.atguigu.gmall.model.order.OrderInfo;
 import com.atguigu.gmall.model.vo.order.OrderConfirmVo;
 import com.atguigu.gmall.model.vo.order.OrderSubmitVo;
 
@@ -20,4 +21,14 @@ public interface OrderService {
 
     //订单创建完成后,给MQ发送消息
     void sendOrderCreateMsg(Long orderId);
+
+    //获取订单详情
+    OrderInfo getOrderInfoByOrderId(Long orderId);
+
+    //修改订单状态为已经支付
+    void updateOrderStatusToPAID(String ouTradeNo);
+
+    //检查订单的状态
+    void checkStatus(String outTradeNo);
+
 }

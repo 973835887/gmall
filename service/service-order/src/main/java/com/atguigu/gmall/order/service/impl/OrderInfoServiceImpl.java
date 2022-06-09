@@ -38,6 +38,14 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
             log.error("修改状态错误"+e);
         }
     }
+
+    //修改订单状态
+    @Override
+    public void updateOrderStatusToPAID(String ouTradeNo, Long userId, String paidStatus, String orderStatus) {
+        orderInfoMapper.updateOrderStatusToPAID(ouTradeNo,userId,paidStatus,orderStatus);
+    }
+
+
 }
 
 

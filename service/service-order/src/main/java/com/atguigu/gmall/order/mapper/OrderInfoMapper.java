@@ -14,6 +14,8 @@ import org.apache.ibatis.annotations.Param;
 public interface OrderInfoMapper extends BaseMapper<OrderInfo> {
 
     void updateStatus(@Param("originStatus") String originStatus, @Param("orderInfo") OrderInfo orderInfo);
+
+    void updateOrderStatusToPAID(@Param("ouTradeNo") String ouTradeNo, @Param("userId") Long userId, @Param("processStatus") String processStatus, @Param("orderStatus") String orderStatus);
 }
 
 

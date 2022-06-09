@@ -47,5 +47,10 @@
         WHERE user_id = #{orderInfo.userId} AND id = #{orderInfo.id} AND order_status = #{originStatus}
     </update>
 
+    <update id="updateOrderStatusToPAID">
+        UPDATE order_info SET order_status = #{orderStatus} , process_status = #{processStatus}
+        WHERE out_trade_no = #{ouTradeNo} AND user_id = #{userId}
+    </update>
+
 
 </mapper>

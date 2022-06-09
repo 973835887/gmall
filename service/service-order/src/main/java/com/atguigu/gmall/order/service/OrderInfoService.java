@@ -13,4 +13,9 @@ public interface OrderInfoService extends IService<OrderInfo> {
 
     //关单 修改订单状态
     void updateStatus(ProcessStatus unpaid, ProcessStatus closed, Long userId, Long orderId);
+
+
+    //修改订单状态为已支付
+    void updateOrderStatusToPAID(String ouTradeNo, Long userId, String name, String name1);
+
 }

@@ -9,6 +9,7 @@ import com.atguigu.gmall.common.result.ResultCodeEnum;
 import com.atguigu.gmall.common.util.AuthUtil;
 import com.atguigu.gmall.common.util.JSONs;
 import com.atguigu.gmall.feign.cart.CartFeignClient;
+import com.atguigu.gmall.feign.pay.PayFeignClient;
 import com.atguigu.gmall.feign.product.ProductFeignClient;
 import com.atguigu.gmall.feign.user.UserFeignClient;
 import com.atguigu.gmall.feign.ware.WareFeignClient;
@@ -27,6 +28,8 @@ import com.atguigu.gmall.model.vo.order.OrderSubmitVo;
 import com.atguigu.gmall.order.service.OrderDetailService;
 import com.atguigu.gmall.order.service.OrderInfoService;
 import com.atguigu.gmall.order.service.OrderService;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,6 +78,9 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     RabbitTemplate rabbitTemplate;
+
+    @Autowired
+    PayFeignClient payFeignClient;
 
     //订单提交页面详情
     @Override
@@ -257,6 +263,49 @@ public class OrderServiceImpl implements OrderService {
 
         //String exchange, String routingKey, Object message
         rabbitTemplate.convertAndSend(MqConst.ORDER_EVENT_EXCHANGE,MqConst.RK_ORDER_CREATE,json);
+    }
+
+    //根据orderId跟UserId获取订单详情信息
+    @Override
+    public OrderInfo getOrderInfoByOrderId(Long orderId) {
+        Long userId = AuthUtil.getUserAuth().getUserId();
+        LambdaQueryWrapper<OrderInfo> wrapper = Wrappers
+                .lambdaQuery(OrderInfo.class)
+                .eq(OrderInfo::getId, orderId)
+                .eq(OrderInfo::getUserId, userId);
+
+        OrderInfo orderInfo =  orderInfoService.getOne(wrapper);
+        return orderInfo;
+    }
+
+    @Override
+    public void updateOrderStatusToPAID(String ouTradeNo) {
+        //GMALL-1654755313050-3-5d70d  获取用户id
+        Long userId = Long.parseLong(ouTradeNo.split("-")[2]);
+
+        ProcessStatus paid = ProcessStatus.PAID;
+
+        orderInfoService.updateOrderStatusToPAID(ouTradeNo,userId,paid.name(),paid.getOrderStatus().name());
+    }
+
+    //检查订单状态是否是未支付
+    @Override
+    public void checkStatus(String outTradeNo) {
+        //1.数据库查出来这个单的状态
+        Long userId = Long.parseLong(outTradeNo.split("-")[2]);
+        LambdaQueryWrapper<OrderInfo> wrapper = Wrappers.lambdaQuery(OrderInfo.class)
+                .eq(OrderInfo::getUserId, userId)
+                .eq(OrderInfo::getOutTradeNo, outTradeNo);
+
+        OrderInfo orderInfo = orderInfoService.getOne(wrapper);
+
+        //2.支付宝查出来这个单的状态
+        String data = payFeignClient.queryTrade(outTradeNo).getData();
+
+        if ("TRADE_SUCCESS".equals(data) && (orderInfo.getOrderStatus().equals(ProcessStatus.UNPAID.name()) || orderInfo.getOrderStatus().equals(ProcessStatus.CLOSED.name()))){
+            //改成已支付
+            updateOrderStatusToPAID(outTradeNo);
+        }
     }
 
     //准备订单项的数据

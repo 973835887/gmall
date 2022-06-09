@@ -1,0 +1,52 @@
+{
+  "groups": [
+    {
+      "name": "app.pay.alipay",
+      "type": "com.atguigu.gmall.pay.config.alipay.AlipayProperties",
+      "sourceType": "com.atguigu.gmall.pay.config.alipay.AlipayProperties"
+    }
+  ],
+  "properties": [
+    {
+      "name": "app.pay.alipay.alipay-public-key",
+      "type": "java.lang.String",
+      "sourceType": "com.atguigu.gmall.pay.config.alipay.AlipayProperties"
+    },
+    {
+      "name": "app.pay.alipay.app-id",
+      "type": "java.lang.String",
+      "sourceType": "com.atguigu.gmall.pay.config.alipay.AlipayProperties"
+    },
+    {
+      "name": "app.pay.alipay.charset",
+      "type": "java.lang.String",
+      "sourceType": "com.atguigu.gmall.pay.config.alipay.AlipayProperties"
+    },
+    {
+      "name": "app.pay.alipay.gateway-url",
+      "type": "java.lang.String",
+      "sourceType": "com.atguigu.gmall.pay.config.alipay.AlipayProperties"
+    },
+    {
+      "name": "app.pay.alipay.merchant-private-key",
+      "type": "java.lang.String",
+      "sourceType": "com.atguigu.gmall.pay.config.alipay.AlipayProperties"
+    },
+    {
+      "name": "app.pay.alipay.notify-url",
+      "type": "java.lang.String",
+      "sourceType": "com.atguigu.gmall.pay.config.alipay.AlipayProperties"
+    },
+    {
+      "name": "app.pay.alipay.return-url",
+      "type": "java.lang.String",
+      "sourceType": "com.atguigu.gmall.pay.config.alipay.AlipayProperties"
+    },
+    {
+      "name": "app.pay.alipay.sign-type",
+      "type": "java.lang.String",
+      "sourceType": "com.atguigu.gmall.pay.config.alipay.AlipayProperties"
+    }
+  ],
+  "hints": []
+}

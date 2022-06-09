@@ -84,7 +84,9 @@ public class UserAuthFilter implements GlobalFilter {
 
                 //5.Response 其实是一个响应数据的订阅者
                 return exchange.getResponse().writeWith(body);
+
             }
+
         }
 
         //3.说明这些请求需要登录才能访问
@@ -99,6 +101,7 @@ public class UserAuthFilter implements GlobalFilter {
                    return locationToLoginPage(exchange);
                }
             }
+
         }
 
         //4.正常请求
@@ -114,6 +117,7 @@ public class UserAuthFilter implements GlobalFilter {
 
 
             return chain.filter(build);
+
         }else {
             boolean validate = validateToken(request);
             if (!validate){
